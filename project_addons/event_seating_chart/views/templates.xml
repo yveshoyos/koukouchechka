@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Layout without menu and footer -->
+    <template id="layout" inherit_id="website.layout" name="Forum Layout" primary="True">
+        <xpath expr="//div[@id='wrapwrap']/header" position="replace"/>
+        <xpath expr="//div[@id='wrapwrap']/footer" position="replace"/>
+    </template>
+
+    <!-- Page preview -->
+    <template id="preview" name="Theater preview">
+        <t t-call="event_seating_chart.layout">
+            <t t-set="head">
+                <t t-raw='head'/>
+                <link rel="stylesheet" href="/event_seating_chart/static/lib/seat-charts/jquery.seat-charts.css"/>
+                <link rel="stylesheet" href="/event_seating_chart/static/src/css/seating.css"/>
+                <script src="/event_seating_chart/static/lib/seat-charts/jquery.seat-charts.js"/>
+            </t>
+            <div id="wrap">
+                <div class="oe_structure"/>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h1 t-field="theater.name"/>
+                            <div class="pull-right">
+                                <a class="btn btn-info"
+                                   t-att-href="'/web#return_label=Website&amp;model=event.theater&amp;id=%s&amp;view_type=form' % theater.id"
+                                   groups="event.group_event_manager">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div id="seat-map">
+                                <div class="front-indicator">Front</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-lg-offset-8 col-lg-4">
+                            <h2>Legend</h2>
+                            <div id="legend"/>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function() {
+                        var seat_num = 1;
+                        var sc = $('#seat-map').seatCharts({
+                            map: <t t-raw="theater.get_json_disposition()"/>,
+                            seats: <t t-raw="theater.get_json_seats()"/>,
+                            legend : {
+                                node : $('#legend'),
+                                items : <t t-raw="theater.get_json_legend_items()"/>
+                            },
+                            naming : {
+                                top : false,
+                                left: true,
+                                rows: <t t-raw="theater.get_rows()"/>,
+                                getId: function(character, row, column) {
+                                    return row + '-' + seat_num;
+                                },
+                                getLabel : function (character, row, column) {
+                                    return row + '-' + seat_num++;
+                                }
+                            }
+                        });
+                    });
+                </script>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
+
+    <!-- Page seat selection -->
+    <template id="seat_selection" name="Seat selection">
+        <t t-call="event_seating_chart.layout">
+            <t t-set="head">
+                <t t-raw='head'/>
+                <link rel="stylesheet" href="/event_seating_chart/static/lib/seat-charts/jquery.seat-charts.css"/>
+                <link rel="stylesheet" href="/event_seating_chart/static/src/css/seating.css"/>
+                <script src="/event_seating_chart/static/lib/seat-charts/jquery.seat-charts.js"/>
+            </t>
+            <div id="wrap">
+                <t t-set="theater" t-value="event.theater_id"/>
+                <div class="oe_structure"/>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h1>Seat selection for event "<t t-esc="event.name"/>"</h1>
+                            <div class="pull-right">
+                                <a class="btn btn-info"
+                                   t-att-href="'/web#return_label=Website&amp;model=event.event&amp;id=%s&amp;view_type=form' % theater.id"
+                                   groups="event.group_event_manager">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" t-if="not theater">
+                        <div class="col-xs-12">
+                            <p>You must select a theater in the event to use this function.</p>
+                        </div>
+                    </div>
+                    <div class="row" t-if="theater">
+                        <div class="col-xs-12">
+                            <div id="seat-map">
+                                <div class="front-indicator">Front</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" t-if="theater">
+                        <div class="col-xs-12 col-lg-4">
+                            <h2>Attendees</h2>
+                            <t t-for="event.attendee_ids" t-as="attendee"/>
+                        </div>
+                        <div class="col-xs-12 col-lg-4">
+                            <h2>Seats</h2>
+                        </div>
+                        <div class="col-xs-12 col-lg-4">
+                            <h2>Legend</h2>
+                            <div id="legend"/>
+                        </div>
+                    </div>
+                    <script t-if="theater">
+                        $(document).ready(function() {
+                            var seat_num = 1;
+                            var sc = $('#seat-map').seatCharts({
+                                map: <t t-raw="theater.get_json_disposition()"/>,
+                                seats: <t t-raw="theater.get_json_seats()"/>,
+                                legend : {
+                                    node : $('#legend'),
+                                    items : <t t-raw="theater.get_json_legend_items()"/>
+                                },
+                                naming : {
+                                    top : false,
+                                    left: true,
+                                    rows: <t t-raw="theater.get_rows()"/>,
+                                    getId: function(character, row, column) {
+                                        return row + '-' + seat_num;
+                                    },
+                                    getLabel : function (character, row, column) {
+                                        return row + '-' + seat_num++;
+                                    }
+                                }
+                            });
+                        });
+                    </script>
+                </div>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
+</odoo>

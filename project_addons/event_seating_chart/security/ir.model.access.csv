@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_model_event_theater,access_model_event_theater,model_event_theater,,1,0,0,0
+access_model_event_theater_manager,access_model_event_theater_manager,model_event_theater,event.group_event_manager,1,1,1,1
