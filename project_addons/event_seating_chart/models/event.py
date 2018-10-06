@@ -24,8 +24,10 @@ class EventTheater(models.Model):
 
     name = fields.Char(string='Name', required=True)
     disposition = fields.Text(string='Disposition', required=True)
-    seats_names = fields.Text(string='Seats names', required=True)
+    seats_names = fields.Text(string='Seats names', required=True, help="Category, relative to seat map. One category per line. Ex: A: Section A")
+    colors = fields.Text(string='Colors', help="Colors, relative to seat map. One color (HTML code) per line. Ex: A: #00ff00")
     rows = fields.Selection([('letter', 'Letters'), ('number', 'Numbers')], string="Label on letters", default='letter', required=True)
+    seats = fields.One2many('event.theater.seat', 'theater_id', string='Seats')
     active = fields.Boolean(string='Active', default=True)
 
     @api.multi
@@ -46,7 +48,7 @@ class EventTheater(models.Model):
         return json.dumps(res)
 
     @api.multi
-    def get_json_seats(self):
+    def _get_seats_name_mapping(self):
         self.ensure_one()
         res = {}
         for seat_name in self.seats_names.split('\n'):
@@ -57,7 +59,36 @@ class EventTheater(models.Model):
                 'classes': slugify(name),
                 'category': name,
             }
-        return json.dumps(res)
+        return res
+
+    @api.multi
+    def _get_seat_colors_mapping(self):
+        self.ensure_one()
+        res = {}
+        if self.colors:
+            for row in self.colors.split('\n'):
+                seat, color = row.split(':', 1)
+                seat = seat.strip()
+                color = color.strip()
+                res[seat] = color
+        return res
+
+    @api.multi
+    def get_json_seats(self):
+        self.ensure_one()
+        return json.dumps(self._get_seats_name_mapping())
+
+    @api.multi
+    def get_css_seats_colors(self):
+        self.ensure_one()
+        classes = self._get_seats_name_mapping()
+        colors = self._get_seat_colors_mapping()
+        res = ''
+        for name, color in colors.items():
+            cl = classes.get(name, {}).get('classes')
+            if cl:
+                res += '.seatCharts-seat.available.%s { background-color: %s !important; }\n' % (cl, color)
+        return '<style>%s</style>' % res if res else ''
 
     @api.multi
     def get_json_legend_items(self):
@@ -68,7 +99,7 @@ class EventTheater(models.Model):
             seat = seat.strip()
             name = name.strip()
             res.append([seat, "available", name])
-            res.append([seat, "unavailable", "Booked"])
+        res.append([seat, "unavailable", "Booked"])
         return json.dumps(res)
 
     @api.multi
@@ -80,3 +111,13 @@ class EventTheater(models.Model):
             res = [chr(i + 64) for i in res]
         return json.dumps(res)
 
+
+class EventTheaterSeat(models.Model):
+    _name = 'event.theater.seat'
+    _description = 'Theater seat'
+    _rec_name = 'label'
+
+    theater_id = fields.Many2one(string='Theaters', required=True)
+    column = fields.Integer(string="Column")
+    row = fields.Integer(string="Row")
+    label = fields.Char(string="Label")

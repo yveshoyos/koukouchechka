@@ -50,8 +50,9 @@
                 <group>
                     <field name="name"/>
                     <field name="disposition"/>
-                    <field name="seats_names"/>
                     <field name="rows"/>
+                    <field name="seats_names"/>
+                    <field name="colors"/>
                 </group>
             </form>
         </field>

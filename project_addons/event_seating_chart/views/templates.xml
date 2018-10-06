@@ -14,6 +14,7 @@
                 <link rel="stylesheet" href="/event_seating_chart/static/lib/seat-charts/jquery.seat-charts.css"/>
                 <link rel="stylesheet" href="/event_seating_chart/static/src/css/seating.css"/>
                 <script src="/event_seating_chart/static/lib/seat-charts/jquery.seat-charts.js"/>
+                <t t-raw='theater.get_css_seats_colors()'/>
             </t>
             <div id="wrap">
                 <div class="oe_structure"/>
@@ -80,6 +81,7 @@
                 <link rel="stylesheet" href="/event_seating_chart/static/lib/seat-charts/jquery.seat-charts.css"/>
                 <link rel="stylesheet" href="/event_seating_chart/static/src/css/seating.css"/>
                 <script src="/event_seating_chart/static/lib/seat-charts/jquery.seat-charts.js"/>
+                <t t-raw='theater.get_css_seats_colors()'/>
             </t>
             <div id="wrap">
                 <t t-set="theater" t-value="event.theater_id"/>
