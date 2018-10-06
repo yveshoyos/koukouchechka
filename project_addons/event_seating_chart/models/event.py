@@ -26,7 +26,7 @@ class EventTheater(models.Model):
     disposition = fields.Text(string='Disposition', required=True)
     seats_names = fields.Text(string='Seats names', required=True, help="Category, relative to seat map. One category per line. Ex: A: Section A")
     colors = fields.Text(string='Colors', help="Colors, relative to seat map. One color (HTML code) per line. Ex: A: #00ff00")
-    rows = fields.Selection([('letter', 'Letters'), ('number', 'Numbers')], string="Label on letters", default='letter', required=True)
+    rows = fields.Selection([('letter', 'Letters'), ('number', 'Numbers')], string='Label on rows', default='letter', required=True)
     seat_ids = fields.One2many('event.theater.seat', 'theater_id', string='Seats')
     active = fields.Boolean(string='Active', default=True)
 
@@ -51,14 +51,14 @@ class EventTheater(models.Model):
     def _get_seats_name_mapping(self):
         self.ensure_one()
         res = {}
-        for seat_name in self.seats_names.split('\n'):
-            seat, name = seat_name.split(':', 1)
-            seat = seat.strip()
-            name = name.strip()
-            res[seat] = {
-                'classes': slugify(name),
-                'category': name,
-            }
+        for line in self.seats_names.split('\n'):
+            line = line.strip()
+            if line:
+                seat, name = list(map(str.strip, line.split(':', 1)))
+                res[seat] = {
+                    'classes': slugify(name),
+                    'category': name,
+                }
         return res
 
     @api.multi
@@ -66,11 +66,11 @@ class EventTheater(models.Model):
         self.ensure_one()
         res = {}
         if self.colors:
-            for row in self.colors.split('\n'):
-                seat, color = row.split(':', 1)
-                seat = seat.strip()
-                color = color.strip()
-                res[seat] = color
+            for line in self.colors.split('\n'):
+                line = line.strip()
+                if line:
+                    seat, color = list(map(str.strip, line.split(':', 1)))
+                    res[seat] = color
         return res
 
     @api.multi
@@ -84,8 +84,8 @@ class EventTheater(models.Model):
         classes = self._get_seats_name_mapping()
         colors = self._get_seat_colors_mapping()
         res = ''
-        for name, color in colors.items():
-            cl = classes.get(name, {}).get('classes')
+        for sear, color in colors.items():
+            cl = classes.get(sear, {}).get('classes')
             if cl:
                 res += '.seatCharts-seat.available.%s { background-color: %s !important; }\n' % (cl, color)
         return '<style>%s</style>' % res if res else ''
@@ -94,12 +94,10 @@ class EventTheater(models.Model):
     def get_json_legend_items(self):
         self.ensure_one()
         res = []
-        for seat_name in self.seats_names.split('\n'):
-            seat, name = seat_name.split(':', 1)
-            seat = seat.strip()
-            name = name.strip()
-            res.append([seat, "available", name])
-        res.append([seat, "unavailable", "Booked"])
+        infos = self._get_seats_name_mapping()
+        for seat, info in infos.items():
+            res.append([seat, 'available', info['category']])
+        res.append([seat, 'unavailable', _('Booked')])
         return json.dumps(res)
 
     @api.multi
@@ -125,7 +123,8 @@ class EventTheater(models.Model):
         n = 1
         for line in self.disposition.strip().split('\n'):
             col = 1
-            for c in line.strip():
+            line = line.strip()
+            for c in line:
                 if c != '_':
                     label = '%s-%s' % (row_labels[row-1], n)
                     self.env['event.theater.seat'].create({
@@ -135,6 +134,7 @@ class EventTheater(models.Model):
                         'character': c,
                         'label': label,
                         'category': seat_names.get(c, {}).get('category', False),
+                        'reduced_mobility': col == 1 or col == len(line) or line[col - 2] == '_' or line[col] == '_',
                     })
                     n += 1
                 col += 1
@@ -182,8 +182,9 @@ class EventTheaterSeat(models.Model):
     _rec_name = 'label'
 
     theater_id = fields.Many2one(string='Theaters', required=True, ondelete='cascade')
-    column = fields.Integer(string="Column")
-    row = fields.Integer(string="Row")
-    character = fields.Char(string="Character", size=1)
-    label = fields.Char(string="Label", required=True)
+    column = fields.Integer(string='Column')
+    row = fields.Integer(string='Row')
+    character = fields.Char(string='Character', size=1)
+    label = fields.Char(string='Label', required=True)
     category = fields.Char(string='Category')
+    reduced_mobility = fields.Boolean(string='Reduced Mobility')

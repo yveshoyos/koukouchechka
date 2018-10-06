@@ -64,6 +64,7 @@
                             <tree>
                                 <field name="label"/>
                                 <field name="category"/>
+                                <field name="reduced_mobility"/>
                                 <field name="column"/>
                                 <field name="row"/>
                                 <field name="character"/>

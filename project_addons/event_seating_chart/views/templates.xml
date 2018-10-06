@@ -76,6 +76,7 @@
     <!-- Page seat selection -->
     <template id="seat_selection" name="Seat selection">
         <t t-call="event_seating_chart.layout">
+            <t t-set="theater" t-value="event.theater_id"/>
             <t t-set="head">
                 <t t-raw='head'/>
                 <link rel="stylesheet" href="/event_seating_chart/static/lib/seat-charts/jquery.seat-charts.css"/>
@@ -84,7 +85,6 @@
                 <t t-raw='theater.get_css_seats_colors()'/>
             </t>
             <div id="wrap">
-                <t t-set="theater" t-value="event.theater_id"/>
                 <div class="oe_structure"/>
                 <div class="container">
                     <div class="row">
