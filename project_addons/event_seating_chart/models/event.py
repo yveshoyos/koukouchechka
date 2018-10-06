@@ -154,11 +154,7 @@ class EventTheater(models.Model):
                 for c in line.strip():
                     if c != '_':
                         characters.add(c)
-        names = set()
-        for seat_name in self.seats_names.split('\n'):
-            seat, name = seat_name.split(':', 1)
-            seat = seat.strip()
-            names.add(seat)
+        names = set(self._get_seats_name_mapping().keys())
         for c in characters:
             if c not in names:
                 raise ValidationError(_('All used characters in disposition (except "_") must have a seat name.'))
