@@ -49,11 +49,28 @@
                 </div>
                 <group>
                     <field name="name"/>
-                    <field name="disposition"/>
                     <field name="rows"/>
-                    <field name="seats_names"/>
-                    <field name="colors"/>
                 </group>
+                <notebook>
+                    <page string="Disposition" name="disposition">
+                        <group>
+                            <field name="disposition"/>
+                            <field name="seats_names"/>
+                            <field name="colors"/>
+                        </group>
+                    </page>
+                    <page string="Seats" name="seats">
+                        <field name="seat_ids" readonly="1">
+                            <tree>
+                                <field name="label"/>
+                                <field name="category"/>
+                                <field name="column"/>
+                                <field name="row"/>
+                                <field name="character"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
             </form>
         </field>
     </record>
