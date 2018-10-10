@@ -22,7 +22,7 @@ class EventTheater(models.Model):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_url',
-            'url': '/seating_chart/preview/%s' % slug(self),
+            'url': '/event_seating/preview/%s' % slug(self),
             'target': 'self',
         }
 

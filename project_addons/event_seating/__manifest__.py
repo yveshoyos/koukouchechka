@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Event Seating chart',
+    'name': 'Event Seating',
     'version': '0.1',
     'author': 'Yves Hoyos',
     "license": "AGPL-3",

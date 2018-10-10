@@ -13,7 +13,7 @@ class EventEvent(models.Model):
     def open_website_set_seats_url(self):
         return {
             'type': 'ir.actions.act_url',
-            'url': '/seating_chart/seat_seats/%s' % slug(self),
+            'url': '/event_seating/seat_seats/%s' % slug(self),
             'target': 'self',
         }
 
