@@ -17,16 +17,21 @@
                 <t t-raw='theater.get_css_seats_colors()'/>
             </t>
             <div id="wrap">
+                <div class="alert alert-info">
+                    <div class="container">
+                        <div class="text-center">
+                            You can go back to backend by using following link.
+                            <a t-attf-href="/web#return_label=Website&amp;model=event.theater&amp;id=#{theater.id}&amp;view_type=form&amp;action=#{theater.env.ref('event_seating_chart.event_theater_action').id}">
+                                <i class="fa fa-arrow-right"/> Back to edit mode
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 <div class="oe_structure"/>
                 <div class="container">
                     <div class="row">
                         <div class="col-xs-12">
                             <h1 t-field="theater.name"/>
-                            <div class="pull-right">
-                                <a class="btn btn-info"
-                                   t-att-href="'/web#return_label=Website&amp;model=event.theater&amp;id=%s&amp;view_type=form' % theater.id"
-                                   groups="event.group_event_manager">Edit</a>
-                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -85,16 +90,21 @@
                 <t t-raw='theater.get_css_seats_colors()'/>
             </t>
             <div id="wrap">
+                <div class="alert alert-info">
+                    <div class="container">
+                        <div class="text-center">
+                            You can go back to backend by using following link.
+                            <a t-attf-href="/web#return_label=Website&amp;model=event.event&amp;id=#{theater.id}&amp;view_type=form&amp;action=#{theater.env.ref('event.action_event_view').id}">
+                                <i class="fa fa-arrow-right"/> Back to edit mode
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 <div class="oe_structure"/>
                 <div class="container">
                     <div class="row">
                         <div class="col-xs-12">
                             <h1>Seat selection for event "<t t-esc="event.name"/>"</h1>
-                            <div class="pull-right">
-                                <a class="btn btn-info"
-                                   t-att-href="'/web#return_label=Website&amp;model=event.event&amp;id=%s&amp;view_type=form' % theater.id"
-                                   groups="event.group_event_manager">Edit</a>
-                            </div>
                         </div>
                     </div>
                     <div class="row" t-if="not theater">
