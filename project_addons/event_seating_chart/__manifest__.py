@@ -8,6 +8,7 @@
     'summary': 'Draw a seating chart for event',
     'depends': [
         'event',
+        'event_registration_multi_qty',
         'website',
     ],
     'data': [
