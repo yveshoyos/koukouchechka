@@ -36,10 +36,13 @@ function html_group_seats(seats) {
         if (groups[i].length > 1) {
             var first = groups[i][0];
             var last = groups[i].slice(-1)[0];
-            res.push(first + ' - ' + last);
+            var html = '<span class="label label-success">' + first + '</span> '+
+                       '<i class="fa fa-arrows-h" aria-hidden="true"></i> ' +
+                       '<span class="label label-success">' + last + '</span>';
+            res.push(html);
         }
         else if (groups[i].length == 1) {
-            res.push(groups[i][0]);
+            res.push('<span class="label label-success">' + groups[i][0] + '</span>');
         }
     }
     return res.join('<br/>');
@@ -78,6 +81,11 @@ function select_multiple(seat, last_selected_seat, target) {
     });
 }
 
+function update_counter_and_seats() {
+    $counter.text(Object.keys(selected_seats).length);
+    $grouped.html(html_group_seats(selected_seats));
+}
+
 function load_seating_chart(counter_selector, cart_selector, group_selector) {
     if (counter_selector) {
         $counter = $(counter_selector);
@@ -112,14 +120,12 @@ function load_seating_chart(counter_selector, cart_selector, group_selector) {
             last_selected = this;
             if (this.status() == 'available') {
                 select_seat(this);
-                $counter.text(selected_seats.length);
-                $grouped.html(html_group_seats(selected_seats));
+                update_counter_and_seats();
                 return 'selected';
             }
             else if (this.status() == 'selected') {
                 unselect_seat(this);
-                $counter.text(selected_seats.length);
-                $grouped.html(html_group_seats(selected_seats));
+                update_counter_and_seats();
                 return 'available';
             }
             else if (this.status() == 'unavailable') {
@@ -131,7 +137,13 @@ function load_seating_chart(counter_selector, cart_selector, group_selector) {
     chart = $('#seat-map').seatCharts(config);
     if (counter_selector) {
         $('.unselect_all_seats').on('click', function () {
-            chart.find('selected').node().click();
+            chart.find('selected').each(function(seatId) {
+                if (this.status() != 'unavailable') {
+                    this.status('available');
+                }
+                unselect_seat(this);
+            });
+            update_counter_and_seats();
         });
     }
 }

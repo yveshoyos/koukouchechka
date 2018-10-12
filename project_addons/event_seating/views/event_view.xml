@@ -50,6 +50,7 @@
                 <group>
                     <field name="name"/>
                     <field name="rows"/>
+                    <field name="display_selected"/>
                 </group>
                 <notebook>
                     <page string="Disposition" name="disposition">

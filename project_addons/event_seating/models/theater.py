@@ -14,6 +14,7 @@ class EventTheater(models.Model):
     seats_names = fields.Text(string='Seats names', required=True, help="Category, relative to seat map. One category per line. Ex: A: Section A")
     colors = fields.Text(string='Colors', help="Colors, relative to seat map. One color (HTML code) per line. Ex: A: #00ff00")
     rows = fields.Selection([('letter', 'Letters'), ('number', 'Numbers')], string='Label on rows', default='letter', required=True)
+    display_selected = fields.Selection([('single', 'Single'), ('group', 'Group'), ('both', 'Both')], string='Display selected seats', default='both', required=True)
     seat_ids = fields.One2many('event.theater.seat', 'theater_id', string='Seats')
     active = fields.Boolean(string='Active', default=True)
 

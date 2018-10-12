@@ -128,8 +128,8 @@
                         </div>
                         <div class="col-xs-12 col-lg-4">
                             <h2>Seats (<span id="seats_counter">0</span>) <a href="#" class="btn-xs unselect_all_seats">[remove all]</a></h2>
-                            <div id="selected_seats"/>
-                            <div id="selected_grouped_seats"/>
+                            <div id="selected_seats" t-att-style="'display: none;' if theater.display_selected not in ('single', 'both') else None"/>
+                            <div id="selected_grouped_seats" t-att-style="'display: none;' if theater.display_selected not in ('group', 'both') else None"/>
                         </div>
                     </div>
                     <script t-if="theater">
