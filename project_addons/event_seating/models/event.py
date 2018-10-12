@@ -17,6 +17,21 @@ class EventEvent(models.Model):
             'target': 'self',
         }
 
+    @api.multi
+    def get_registrations_json(self):
+        self.ensure_one()
+        res = {}
+        for registration in self.registration_ids:
+            res[registration.id] = {
+                'id': registration.id,
+                'name': registration.name,
+                'date': registration.date_open,
+                'qty': registration.qty,
+                'seats_count': registration.seats_count,
+                'seats': [],
+            }
+        return json.dumps(res)
+
 
 class EventRegistration(models.Model):
     _inherit = 'event.registration'

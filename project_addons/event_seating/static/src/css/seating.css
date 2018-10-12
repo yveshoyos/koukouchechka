@@ -34,3 +34,6 @@ div.seatCharts-cell {
 div.seatCharts-seat {
     font-size: 0.6em;
 }
+li#cart-item-template {
+    display: none;
+}
