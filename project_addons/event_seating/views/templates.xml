@@ -8,6 +8,7 @@
             <link rel="stylesheet" href="/event_seating/static/lib/seat-charts/jquery.seat-charts.css"/>
             <link rel="stylesheet" href="/event_seating/static/src/css/seating.css"/>
             <script src="/event_seating/static/lib/seat-charts/jquery.seat-charts.js"/>
+            <script src="/event_seating/static/src/js/seating.js"/>
             <t t-raw='theater.get_css_seats_colors()'/>
         </xpath>
     </template>
@@ -61,26 +62,11 @@
                 </div>
                 <script>
                     $(document).ready(function() {
-                        var seat_num = 1;
-                        var sc = $('#seat-map').seatCharts({
-                            map: <t t-raw="theater.get_json_disposition()"/>,
-                            seats: <t t-raw="theater.get_json_seats()"/>,
-                            legend: {
-                                node : $('#legend'),
-                                items : <t t-raw="theater.get_json_legend_items()"/>
-                            },
-                            naming: {
-                                top : false,
-                                left: true,
-                                rows: <t t-raw="theater.get_rows()"/>,
-                                getId: function(character, row, column) {
-                                    return row + '-' + seat_num;
-                                },
-                                getLabel : function (character, row, column) {
-                                    return row + '-' + seat_num++;
-                                }
-                            }
-                        });
+                        map = <t t-raw="theater.get_json_disposition()"/>;
+                        seats = <t t-raw="theater.get_json_seats()"/>;
+                        legend = <t t-raw="theater.get_json_legend_items()"/>;
+                        rows = <t t-raw="theater.get_rows()"/>;
+                        load_seating_chart();
                     });
                 </script>
                 <div class="oe_structure"/>
@@ -147,105 +133,13 @@
                         </div>
                     </div>
                     <script t-if="theater">
-                        function group_seats(seats) {
-                            if (jQuery.isEmptyObject(seats)) {
-                                return [];
-                            }
-                            var number_label = {};
-                            var numbers = [];
-                            for (var id in seats) {
-                                var label = seats[id];
-                                var num = parseInt(label.replace(/\D/g, ""), 10);
-                                number_label[num] = label;
-                                numbers.push(num);
-                            }
-                            numbers = numbers.sort(function (a, b) { return a - b; });
-                            var groups = [[number_label[numbers[0]]]];
-                            var n = 0;
-                            for (var i=1; i &lt; numbers.length; i++) {
-                                if (numbers[i-1] + 1 == numbers[i]) {
-                                    groups[n].push(number_label[numbers[i]]);
-                                }
-                                else {
-                                    n++;
-                                    groups[n] = [number_label[numbers[i]]];
-                                }
-                            }
-                            return groups;
-                        }
-                        function html_group_seats(seats) {
-                            var groups = group_seats(seats);
-                            var res = [];
-                            var n = 0;
-                            for (var i in groups) {
-                                if (groups[i].length > 1) {
-                                    var first = groups[i][0];
-                                    var last = groups[i].slice(-1)[0];
-                                    res.push(first + ' - ' + last);
-                                }
-                                else if (groups[i].length == 1) {
-                                    res.push(groups[i][0]);
-                                }
-                            }
-                            return res.join('&lt;br/&gt;');
-                        }
                         $(document).ready(function() {
-                            var registrations = <t t-raw="event.get_registrations_json()"/>;
-                            var seat_num = 1;
-                            var selected_seats = [];
-                            var last_selected;
-                            var $counter = $('#seats_counter');
-                            var $cart = $('#selected_seats');
-                            var $grouped = $('#selected_grouped_seats');
-                            var sc = $('#seat-map').seatCharts({
-                                map: <t t-raw="theater.get_json_disposition()"/>,
-                                seats: <t t-raw="theater.get_json_seats()"/>,
-                                legend : {
-                                    node : $('#legend'),
-                                    items : <t t-raw="theater.get_json_legend_items()"/>
-                                },
-                                naming : {
-                                    top : false,
-                                    left: true,
-                                    rows: <t t-raw="theater.get_rows()"/>,
-                                    getId: function(character, row, column) {
-                                        return row + '-' + seat_num;
-                                    },
-                                    getLabel : function (character, row, column) {
-                                        return row + '-' + seat_num++;
-                                    }
-                                },
-                                click: function (e) {
-                                    if (last_selected &amp;&amp; e.shiftKey) {
-                                    }
-                                    last_selected = this;
-                                    if (this.status() == 'available') {
-                                        $('&lt;span class="label label-primary"/&gt;').text(this.settings.label)
-                                            .attr('id', 'cart-item-' + this.settings.id)
-                                            .data('seat-id', this.settings.id)
-                                            .appendTo($cart);
-                                        $cart.append(' ');
-                                        $counter.text(sc.find('selected').length + 1);
-                                        selected_seats[this.settings.id] = this.settings.label;
-                                        $grouped.html(html_group_seats(selected_seats));
-                                        return 'selected';
-                                    }
-                                    else if (this.status() == 'selected') {
-                                        $counter.text(sc.find('selected').length - 1);
-							            $('#cart-item-' + this.settings.id).remove();
-                                        delete selected_seats[this.settings.id];
-                                        $grouped.html(html_group_seats(selected_seats));
-                                        return 'available';
-                                    }
-                                    else if (this.status() == 'unavailable') {
-                                        return 'unavailable';
-                                    }
-                                    return this.style();
-                                }
-                            });
-                            $('.unselect_all_seats').on('click', function () {
-                                sc.find('selected').node().click();
-                            });
+                            registrations = <t t-raw="event.get_registrations_json()"/>;
+                            map = <t t-raw="theater.get_json_disposition()"/>;
+                            seats = <t t-raw="theater.get_json_seats()"/>;
+                            legend = <t t-raw="theater.get_json_legend_items()"/>;
+                            rows = <t t-raw="theater.get_rows()"/>;
+                            load_seating_chart('#seats_counter', '#selected_seats', '#selected_grouped_seats');
                         });
                     </script>
                 </div>
