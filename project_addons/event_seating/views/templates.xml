@@ -6,7 +6,9 @@
         <xpath expr="//div[@id='wrapwrap']/footer" position="replace"/>
         <xpath expr="//t[@t-call-assets='website.assets_editor'][@t-css='false']" position="after">
             <link rel="stylesheet" href="/event_seating/static/lib/seat-charts/jquery.seat-charts.css"/>
+            <link rel="stylesheet" href="/event_seating/static/lib/datatables/datatables.css"/>
             <link rel="stylesheet" href="/event_seating/static/src/css/seating.css"/>
+            <script src="/event_seating/static/lib/datatables/datatables.js"/>
             <script src="/event_seating/static/lib/seat-charts/jquery.seat-charts.js"/>
             <script src="/event_seating/static/src/js/seating.js"/>
             <t t-raw='theater.get_css_seats_colors()'/>
@@ -46,7 +48,7 @@
                     <t t-set="action" t-value="'event_seating.event_theater_action'"/>
                 </t>
                 <div class="oe_structure"/>
-                <div class="container">
+                <div class="container mb32">
                     <div class="row">
                         <div class="col-xs-12">
                             <h1 t-field="theater.name"/>
@@ -86,7 +88,7 @@
                     <t t-set="action" t-value="'event.action_event_view'"/>
                 </t>
                 <div class="oe_structure"/>
-                <div class="container">
+                <div class="container mb32">
                     <div class="row">
                         <div class="col-xs-12">
                             <h1>Seat selection for event "<t t-esc="event.name"/>"</h1>
@@ -99,27 +101,35 @@
                     </div>
                     <t t-call="event_seating.seat_map"/>
                     <div class="row" t-if="theater">
-                        <div class="col-xs-12 col-lg-2">
-                            <h2>Legend</h2>
-                            <div id="legend"/>
-                        </div>
-                        <div class="col-xs-12 col-lg-6">
+                        <div class="col-xs-12 col-lg-5">
                             <h2>Attendees</h2>
-                            <table class="table">
+                            <table class="table" id="attendees_list">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
                                         <th>Date</th>
                                         <th>Seated</th>
+                                        <th/>
+                                        <th/>
+                                        <th/>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <t t-foreach="event.registration_ids" t-as="registration">
-                                        <tr>
+                                        <tr class="attendee" t-att-data-id="registration.id">
                                             <td t-esc="registration.name"/>
                                             <td t-esc="registration.date_open" t-options="{'widget': 'datetime'}"/>
                                             <td>
                                                 <span t-esc="registration.seats_count"/> / <span t-esc="registration.qty"/>
+                                            </td>
+                                            <td class="display" title="Display on map">
+                                                <i class="fa fa-search fa-fw"/>
+                                            </td>
+                                            <td class="unassign" title="Unassign">
+                                                <i class="fa fa-delete fa-fw"/>
+                                            </td>
+                                            <td class="select" title="Select">
+                                                <i class="fa fa-chevron-right fa-fw"/>
                                             </td>
                                         </tr>
                                     </t>
@@ -128,8 +138,40 @@
                         </div>
                         <div class="col-xs-12 col-lg-4">
                             <h2>Seats (<span id="seats_counter">0</span>) <a href="#" class="btn-xs unselect_all_seats">[remove all]</a></h2>
-                            <div id="selected_seats" t-att-style="'display: none;' if theater.display_selected not in ('single', 'both') else None"/>
-                            <div id="selected_grouped_seats" t-att-style="'display: none;' if theater.display_selected not in ('group', 'both') else None"/>
+                            <div id="form">
+                                <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button" id="validate_assign">Assign!</button>
+                                    </span>
+                                    <select id="assign" class="form-control">
+                                        <option/>
+                                        <t t-foreach="event.registration_ids" t-as="registration">
+                                            <option t-att-value="registration.id" t-esc="registration.name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="selected_seats" class="mb16" t-att-style="'display: none;' if theater.display_selected not in ('single', 'both') else None"/>
+                            <div id="selected_grouped_seats" class="mb16" t-att-style="'display: none;' if theater.display_selected not in ('group', 'both') else None"/>
+                        </div>
+                        <div class="col-xs-12 col-lg-3">
+                            <h2>Informations</h2>
+                            <div id="seat_informations">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-tag fa-fw"/>
+                                    </span>
+                                    <p class="form-control form-control-static seat_number"/>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-user fa-fw"/>
+                                    </span>
+                                    <p class="form-control form-control-static seat_attendee"/>
+                                </div>
+                            </div>
+                            <h2>Legend</h2>
+                            <div id="legend"/>
                         </div>
                     </div>
                     <script t-if="theater">
@@ -140,6 +182,14 @@
                             legend = <t t-raw="theater.get_json_legend_items()"/>;
                             rows = <t t-raw="theater.get_rows()"/>;
                             load_seating_chart('#seats_counter', '#selected_seats', '#selected_grouped_seats');
+                            $('#attendees_list').DataTable({
+                                "paging": false,
+                                "info": false,
+                                "columnDefs": [{
+                                    "targets": [3, 5],
+                                    "orderable": false
+                                }]
+                            });
                         });
                     </script>
                 </div>

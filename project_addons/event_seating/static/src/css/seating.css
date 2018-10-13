@@ -37,3 +37,6 @@ div.seatCharts-seat {
 li#cart-item-template {
     display: none;
 }
+#selected_seats, #selected_grouped_seats {
+    font-size: 1.3em;
+}

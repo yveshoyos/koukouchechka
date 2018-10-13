@@ -133,6 +133,16 @@ function load_seating_chart(counter_selector, cart_selector, group_selector) {
             }
             return this.style();
         };
+        config.focus = function (e) {
+            if (this.status() == 'available') {
+                $('#seat_informations .seat_number').text(this.settings.label);
+                /*$('#seat_informations .seat_attendee').text(this.settings.label);*/
+                return 'focused';
+            }
+            $('#seat_informations .seat_number').text('');
+            $('#seat_informations .seat_attendee').text('');
+            return this.style();
+        };
     }
     chart = $('#seat-map').seatCharts(config);
     if (counter_selector) {
@@ -144,6 +154,14 @@ function load_seating_chart(counter_selector, cart_selector, group_selector) {
                 unselect_seat(this);
             });
             update_counter_and_seats();
+        });
+        $('tr.attendee .select').click(function () {
+            $('#assign').val($(this).closest('tr').data('id'));
+        });
+        $('#validate_assign').click(function () {
+            // Check if selected
+            // Check if attendee
+            // Call ajax
         });
     }
 }
