@@ -68,7 +68,7 @@
                         seats = <t t-raw="theater.get_json_seats()"/>;
                         legend = <t t-raw="theater.get_json_legend_items()"/>;
                         rows = <t t-raw="theater.get_rows()"/>;
-                        load_seating_chart();
+                        odoo.load_seating_chart();
                     });
                 </script>
                 <div class="oe_structure"/>
@@ -120,13 +120,13 @@
                                             <td t-esc="registration.name"/>
                                             <td t-esc="registration.date_open" t-options="{'widget': 'datetime'}"/>
                                             <td>
-                                                <span t-esc="registration.seats_count"/> / <span t-esc="registration.qty"/>
+                                                <span class="seats_count" t-esc="registration.seats_count"/> / <span class="seats_qty" t-esc="registration.qty"/>
                                             </td>
                                             <td class="display" title="Display on map">
                                                 <i class="fa fa-search fa-fw"/>
                                             </td>
-                                            <td class="unassign" title="Unassign">
-                                                <i class="fa fa-delete fa-fw"/>
+                                            <td class="unassign_all" title="Unassign all">
+                                                <i class="fa fa-trash fa-fw"/>
                                             </td>
                                             <td class="select" title="Select">
                                                 <i class="fa fa-chevron-right fa-fw"/>
@@ -181,7 +181,7 @@
                             seats = <t t-raw="theater.get_json_seats()"/>;
                             legend = <t t-raw="theater.get_json_legend_items()"/>;
                             rows = <t t-raw="theater.get_rows()"/>;
-                            load_seating_chart('#seats_counter', '#selected_seats', '#selected_grouped_seats');
+                            odoo.load_seating_chart(true, true, true);
                             $('#attendees_list').DataTable({
                                 "paging": false,
                                 "info": false,
