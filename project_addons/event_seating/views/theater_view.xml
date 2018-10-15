@@ -1,26 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
 
-    <record id="view_event_event_form" model="ir.ui.view">
-        <field name="name">event.event.theater.form</field>
-        <field name="model">event.event</field>
-        <field name="inherit_id" ref="event.view_event_form"/>
-        <field name="arch" type="xml">
-            <field name="address_id" position="after">
-                <field name="theater_id"/>
-            </field>
-            <xpath expr="//button[@name='toggle_active']" position="before">
-                <button name="open_website_set_seats_url"
-                        type="object"
-                        class="oe_stat_button"
-                        icon="fa-users"
-                        attrs="{'invisible': [('theater_id', '=', False)]}">
-                    Set seats
-                </button>
-            </xpath>
-        </field>
-    </record>
-
     <record id="view_event_theater_tree" model="ir.ui.view">
         <field name="name">event.theater.tree</field>
         <field name="model">event.theater</field>
@@ -50,6 +30,7 @@
                 <group>
                     <field name="name"/>
                     <field name="rows"/>
+                    <field name="display_selected"/>
                 </group>
                 <notebook>
                     <page string="Disposition" name="disposition">
@@ -64,6 +45,7 @@
                             <tree>
                                 <field name="label"/>
                                 <field name="category"/>
+                                <field name="reduced_mobility"/>
                                 <field name="column"/>
                                 <field name="row"/>
                                 <field name="character"/>
