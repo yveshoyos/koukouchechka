@@ -206,4 +206,110 @@
         </t>
     </template>
 
+
+    <!-- Page display seats -->
+    <template id="seat_display" name="Seats">
+        <t t-set="theater" t-value="event.theater_id"/>
+        <t t-call="event_seating.layout">
+            <div id="wrap">
+                <t t-call="event_seating.go_to_backend">
+                    <t t-set="model" t-value="'event.event'"/>
+                    <t t-set="res_id" t-value="theater.id"/>
+                    <t t-set="action" t-value="'event.action_event_view'"/>
+                </t>
+                <div class="oe_structure"/>
+                <div class="container mb32">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h1>Seating for event "<t t-esc="event.name"/>"</h1>
+                        </div>
+                    </div>
+                    <div class="row" t-if="not theater">
+                        <div class="col-xs-12">
+                            <p>You must select a theater in the event to use this function.</p>
+                        </div>
+                    </div>
+                    <t t-call="event_seating.seat_map"/>
+                    <div class="row" t-if="theater">
+                        <div class="col-xs-12 col-lg-5">
+                            <h2>Attendees</h2>
+                            <table class="table" id="attendees_list">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th>Seated</th>
+                                        <th/>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="event.registration_ids" t-as="registration">
+                                        <tr class="attendee" t-att-data-id="registration.id">
+                                            <td t-esc="registration.name"/>
+                                            <td t-esc="registration.date_open" t-options="{'widget': 'datetime'}"/>
+                                            <td>
+                                                <span class="seats_count" t-esc="registration.seats_count"/> / <span class="seats_qty" t-esc="registration.qty"/>
+                                            </td>
+                                            <td class="display" title="Display on map">
+                                                <i class="fa fa-search fa-fw"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-xs-12 col-lg-4">
+                            <h2>
+                                Seats
+                            </h2>
+                            <div id="searched_seats" class="mb16"/>
+                        </div>
+                        <div class="col-xs-12 col-lg-3">
+                            <h2>Informations</h2>
+                            <div id="seat_informations">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-tag fa-fw"/>
+                                    </span>
+                                    <p class="form-control form-control-static seat_number"/>
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-user fa-fw"/>
+                                    </span>
+                                    <p class="form-control form-control-static seat_attendee"/>
+                                </div>
+                            </div>
+                            <label for="reservations_colors">
+                                <input type="checkbox" id="reservations_colors"/>
+                                Use color to display groups
+                            </label>
+                            <h2>Legend</h2>
+                            <div id="legend"/>
+                        </div>
+                    </div>
+                    <script t-if="theater">
+                        $(document).ready(function() {
+                            registrations = <t t-raw="event.get_registrations_json()"/>;
+                            map = <t t-raw="theater.get_json_disposition()"/>;
+                            seats = <t t-raw="theater.get_json_seats()"/>;
+                            legend = <t t-raw="theater.get_json_legend_items()"/>;
+                            rows = <t t-raw="theater.get_rows()"/>;
+                            odoo.load_seating_chart(false, false, true);
+                            $('#attendees_list').DataTable({
+                                "paging": false,
+                                "info": false,
+                                "columnDefs": [{
+                                    "targets": [3],
+                                    "orderable": false
+                                }]
+                            });
+                        });
+                    </script>
+                </div>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
 </odoo>

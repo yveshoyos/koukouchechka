@@ -13,6 +13,7 @@
     ],
     'data': [
         'views/event_view.xml',
+        'views/theater_view.xml',
         'views/templates.xml',
         'security/ir.model.access.csv',
     ],

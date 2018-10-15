@@ -18,6 +18,12 @@ class WebsiteSeatingChart(http.Controller):
             'event': event,
         })
 
+    @http.route('/event_seating/display_seats/<model("event.event"):event>', type='http', auth="user", website=True)
+    def display_seats(self, event, **kwargs):
+        return request.render("event_seating.seat_display", {
+            'event': event,
+        })
+
     @http.route('/event_seating/assign_seats', type='json', auth="user", website=True)
     def assign_seats(self, registration_id=None, seats=None, **kwargs):
         try:

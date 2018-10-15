@@ -17,6 +17,13 @@ class EventEvent(models.Model):
             'target': 'self',
         }
 
+    def open_website_display_seats_url(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/event_seating/display_seats/%s' % slug(self),
+            'target': 'self',
+        }
+
     @api.multi
     def get_registrations_json(self):
         self.ensure_one()

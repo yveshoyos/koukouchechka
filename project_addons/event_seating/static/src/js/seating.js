@@ -169,6 +169,14 @@ odoo.define('event_seating.seating', function (require) {
                 getLabel: function (character, row, column) {
                     return row + '-' + seat_num++;
                 }
+            },
+            focus: function (e) {
+                $('#seat_informations .seat_number').text(this.settings.label);
+                $('#seat_informations .seat_attendee').text(seat_informations[this.settings.label] || '');
+                if (this.status() == 'available') {
+                    return 'focused';
+                }
+                return this.style();
             }
         };
         if (with_click) {
@@ -193,12 +201,9 @@ odoo.define('event_seating.seating', function (require) {
                 }
                 return this.style();
             };
-            config.focus = function (e) {
-                $('#seat_informations .seat_number').text(this.settings.label);
-                $('#seat_informations .seat_attendee').text(seat_informations[this.settings.label] || '');
-                if (this.status() == 'available') {
-                    return 'focused';
-                }
+        }
+        else {
+            config.click = function (e) {
                 return this.style();
             };
         }
@@ -242,6 +247,7 @@ odoo.define('event_seating.seating', function (require) {
                     }
                 });
                 chart.get(seats).node().toggleClass('highlight');
+                $('#searched_seats').html(html_group_seats(seats) || '');
             });
             $('tr.attendee .select').click(function () {
                 $('#assign').val($(this).closest('tr').data('id'));
