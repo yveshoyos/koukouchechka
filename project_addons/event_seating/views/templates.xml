@@ -137,7 +137,11 @@
                             </table>
                         </div>
                         <div class="col-xs-12 col-lg-4">
-                            <h2>Seats (<span id="seats_counter">0</span>) <a href="#" class="btn-xs unselect_all_seats">[remove all]</a></h2>
+                            <h2>
+                                Seats (<span id="seats_counter">0</span>)
+                                <a href="#" class="btn-xs unselect_all_seats">[remove all]</a>
+                                <a href="#" class="btn-xs clear_highlighted_seats">[clear selection]</a>
+                            </h2>
                             <div id="form">
                                 <div class="input-group">
                                     <span class="input-group-btn">
@@ -170,6 +174,10 @@
                                     <p class="form-control form-control-static seat_attendee"/>
                                 </div>
                             </div>
+                            <label for="reservations_colors">
+                                <input type="checkbox" id="reservations_colors"/>
+                                Use color to display groups
+                            </label>
                             <h2>Legend</h2>
                             <div id="legend"/>
                         </div>

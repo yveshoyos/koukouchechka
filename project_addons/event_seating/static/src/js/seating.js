@@ -4,8 +4,20 @@ odoo.define('event_seating.seating', function (require) {
     var core = require('web.core');
     var _t = core._t;
 
-    var chart, last_selected, selected_seats = [], seat_num = 1;
+    var chart, last_selected, selected_seats = [], seat_num = 1, seat_informations = {}, seat_reservation = {};
     var $counter, $cart, $grouped;
+
+    function prepare_seat_informations(registrations) {
+        seat_informations = {};
+        seat_reservation = {};
+        for (var key in registrations) {
+            for (var i in registrations[key].seats) {
+                var seat = registrations[key].seats[i];
+                seat_informations[seat] = registrations[key].name;
+                seat_reservation[seat] = key;
+            }
+        }
+    }
 
     function group_seats(seats) {
         if (jQuery.isEmptyObject(seats)) {
@@ -114,6 +126,28 @@ odoo.define('event_seating.seating', function (require) {
         $grouped.html(html_group_seats(selected_seats));
     }
 
+    function add_grp_classes() {
+        var grp_num = 0;
+        var reservation_grp = [];
+        for (var seat in seat_reservation) {
+            var reservation_id = seat_reservation[seat];
+            if (reservation_grp[reservation_id] === undefined) {
+                reservation_grp[reservation_id] = grp_num % 24;
+                grp_num++;
+            }
+            console.log(seat, reservation_grp[reservation_id]);
+            $('#' + seat + '.seatCharts-seat').addClass('grp' + reservation_grp[reservation_id]);
+        }
+    }
+
+    function remove_grp_classes() {
+        var grp_num = 0;
+        var reservation_grp = [];
+        for (var i=0; i<24; i++) {
+            $('.seatCharts-seat.grp' + i).removeClass('grp' + i);
+        }
+    }
+
     odoo.load_seating_chart = function(with_click, with_assign, with_table) {
         $counter = $('#seats_counter');
         $cart = $('#selected_seats');
@@ -160,13 +194,11 @@ odoo.define('event_seating.seating', function (require) {
                 return this.style();
             };
             config.focus = function (e) {
+                $('#seat_informations .seat_number').text(this.settings.label);
+                $('#seat_informations .seat_attendee').text(seat_informations[this.settings.label] || '');
                 if (this.status() == 'available') {
-                    $('#seat_informations .seat_number').text(this.settings.label);
-                    /*$('#seat_informations .seat_attendee').text(this.settings.label);*/
                     return 'focused';
                 }
-                $('#seat_informations .seat_number').text('');
-                $('#seat_informations .seat_attendee').text('');
                 return this.style();
             };
         }
@@ -195,7 +227,22 @@ odoo.define('event_seating.seating', function (require) {
                     }
                 }
                 book_multiple(Object.values(booked_seats));
+                prepare_seat_informations(registrations);
             }
+            $('.clear_highlighted_seats').click(function () {
+                $('.seatCharts-seat.highlight').removeClass('highlight');
+            });
+            $('tr.attendee .display').click(function () {
+                var registration_id = $(this).closest('tr').data('id');
+                var seats = registrations[registration_id].seats;
+                $('.seatCharts-seat.highlight').each(function () {
+                    var seat = $(this).attr('id');
+                    if (jQuery.inArray(seat, seats) == -1) {
+                        $(this).removeClass('highlight');
+                    }
+                });
+                chart.get(seats).node().toggleClass('highlight');
+            });
             $('tr.attendee .select').click(function () {
                 $('#assign').val($(this).closest('tr').data('id'));
                 if (!$.isEmptyObject(selected_seats)) {
@@ -215,11 +262,20 @@ odoo.define('event_seating.seating', function (require) {
                         $table_tr.find('.seats_count').text(result.registration.seats_count);
                         $table_tr.find('.seats_qty').text(result.registration.qty);
                         $('.unselect_all_seats').click();
+                        prepare_seat_informations(registrations);
                     }
                     else {
                         alert(result.error);
                     }
                 });
+            });
+            $('#reservations_colors').change(function () {
+                if ($(this).is(':checked')) {
+                    add_grp_classes();
+                }
+                else {
+                    remove_grp_classes();
+                }
             });
         }
         if (with_assign) {
@@ -259,6 +315,7 @@ odoo.define('event_seating.seating', function (require) {
                         $table_tr.find('.seats_count').text(result.registration.seats_count);
                         $table_tr.find('.seats_qty').text(result.registration.qty);
                         $('.unselect_all_seats').click();
+                        prepare_seat_informations(registrations);
                     }
                     else {
                         alert(result.error);
