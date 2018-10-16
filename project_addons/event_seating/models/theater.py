@@ -172,3 +172,9 @@ class EventTheaterSeat(models.Model):
     label = fields.Char(string='Label', required=True)
     category = fields.Char(string='Category')
     reduced_mobility = fields.Boolean(string='Reduced Mobility')
+
+    def __repr__(self):
+        return self.label
+
+    def __str__(self):
+        return self.label
