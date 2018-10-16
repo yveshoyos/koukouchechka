@@ -12,16 +12,11 @@ class WebsiteSeatingChart(http.Controller):
             'theater': theater,
         })
 
-    @http.route('/event_seating/set_seats/<model("event.event"):event>', type='http', auth="user", website=True)
+    @http.route('/event_seating/<model("event.event"):event>', type='http', auth="user", website=True)
     def set_seats(self, event, **kwargs):
         return request.render("event_seating.seat_selection", {
             'event': event,
-        })
-
-    @http.route('/event_seating/display_seats/<model("event.event"):event>', type='http', auth="user", website=True)
-    def display_seats(self, event, **kwargs):
-        return request.render("event_seating.seat_display", {
-            'event': event,
+            'edit': kwargs.get('edit', False),
         })
 
     @http.route('/event_seating/assign_seats', type='json', auth="user", website=True)

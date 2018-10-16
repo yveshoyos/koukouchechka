@@ -10,20 +10,19 @@
                 <field name="theater_id"/>
             </field>
             <xpath expr="//button[@name='toggle_active']" position="before">
-                <button name="open_website_set_seats_url"
-                        type="object"
-                        class="oe_stat_button"
-                        icon="fa-users"
-                        attrs="{'invisible': [('theater_id', '=', False)]}">
-                    Set seats
-                </button>
-                <button name="open_website_display_seats_url"
+                <button name="open_website_seating_url"
                         type="object"
                         class="oe_stat_button"
                         icon="fa-ticket"
                         attrs="{'invisible': [('theater_id', '=', False)]}">
-                    Seats
+                    Seating
                 </button>
+            </xpath>
+            <xpath expr="//field[@name='state']" position="before">
+                <button name="automatically_compute_seats"
+                        type="object"
+                        string="Compute seating"
+                        attrs="{'invisible': [('theater_id', '=', False)]}"/>
             </xpath>
         </field>
     </record>

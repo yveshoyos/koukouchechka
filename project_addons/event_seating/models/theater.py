@@ -165,10 +165,16 @@ class EventTheaterSeat(models.Model):
     _description = 'Theater seat'
     _rec_name = 'label'
 
-    theater_id = fields.Many2one(string='Theaters', required=True, ondelete='cascade')
+    theater_id = fields.Many2one('event.theater', string='Theaters', required=True, ondelete='cascade')
     column = fields.Integer(string='Column')
     row = fields.Integer(string='Row')
     character = fields.Char(string='Character', size=1)
     label = fields.Char(string='Label', required=True)
     category = fields.Char(string='Category')
     reduced_mobility = fields.Boolean(string='Reduced Mobility')
+
+    def __repr__(self):
+        return self.label
+
+    def __str__(self):
+        return self.label

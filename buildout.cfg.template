@@ -23,7 +23,7 @@ apply-requirements-file = True
 
 addons = local ./project_addons/
          git https://github.com/OCA/server-ux.git parts/community/addons-oca-server-ux 11.0
-         git https://github.com/OCA/event.git parts/community/addons-oca-event 11.0
+         git https://github.com/yveshoyos/event.git parts/community/addons-oca-event 11.0
          git https://github.com/OCA/web.git parts/community/addons-oca-web 11.0
 
 eggs = PyPDF
