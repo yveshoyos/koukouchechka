@@ -3,21 +3,21 @@
 
 # For buildout
 .installed.cfg
-bin/
+/bin/
 buildout.cfg
-develop-eggs/
-develop-src/
-downloads/
-eggs/
-etc/
-parts/
-include/
-lib/
-py36/
-share/
+/develop-eggs/
+/develop-src/
+/downloads/
+/eggs/
+/etc/
+/parts/
+/include/
+/lib/
+/py36/
+/share/
 /upgrade.py
 /pip-selfcheck.json
-.idea/
+/.idea/
 
 # For buildout development
 a.r.odoo/
